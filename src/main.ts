@@ -61,6 +61,15 @@ const ctx: Ctx = {
       /* ignore persistence failure */
     }
   },
+  checkForUpdates: async () => {
+    const upd = await checkForUpdate();
+    if (upd) {
+      tb.flash("update", "Update");
+      showUpdateBanner(upd);
+      return true;
+    }
+    return false;
+  },
   pendingRecording: null,
   recordStartedAt: null,
 };
@@ -206,6 +215,7 @@ async function init() {
 }
 
 function showUpdateBanner(upd: AvailableUpdate) {
+  document.querySelector(".update-banner")?.remove(); // avoid stacking
   const text = h(
     "span",
     { class: "update-text" },

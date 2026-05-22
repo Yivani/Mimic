@@ -141,6 +141,26 @@ export function createSettings(ctx: Ctx): ViewController {
     .then((v) => (versionLabel.textContent = `Mimic v${v}`))
     .catch(() => {});
 
+  const checkUpdateBtn = h(
+    "button",
+    {
+      class: "btn ghost small",
+      onClick: async () => {
+        checkUpdateBtn.disabled = true;
+        checkUpdateBtn.textContent = "Checking…";
+        try {
+          const available = await ctx.checkForUpdates();
+          if (!available) toast("You're on the latest version", "ok");
+        } catch {
+          toast("Couldn't check for updates", "error");
+        }
+        checkUpdateBtn.disabled = false;
+        checkUpdateBtn.textContent = "Check for updates";
+      },
+    },
+    "Check for updates",
+  );
+
   const root = h(
     "div",
     { class: "view settings-view" },
@@ -152,7 +172,7 @@ export function createSettings(ctx: Ctx): ViewController {
     h(
       "div",
       { class: "settings-footer" },
-      versionLabel,
+      h("div", { class: "footer-left" }, versionLabel, checkUpdateBtn),
       h("div", { class: "settings-save" }, saveBtn),
     ),
   );

@@ -32,6 +32,9 @@ export interface Ctx {
   saveSettings(s: Settings): Promise<void>;
   /** Flip between dark/light, apply live, and persist. */
   toggleTheme(): Promise<void>;
+  /** Manually check for an update; shows the banner if one is available.
+   * Returns true if an update was found. */
+  checkForUpdates(): Promise<boolean>;
   /** A finished-but-unsaved recording, cached so it survives tab switches. */
   pendingRecording: Macro | null;
   /** Wall-clock ms when the current recording began (for the elapsed timer). */
