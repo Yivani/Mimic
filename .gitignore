@@ -9,3 +9,4 @@ Thumbs.db
 # Tauri updater signing key (keep secret)
 src-tauri/mimic_updater.key
 release/
+.claude/
