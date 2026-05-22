@@ -150,7 +150,9 @@ select {
   background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
+/* Semantic status colors — the one place color is allowed in the mono UI. */
 .status-pill {
+  --st: var(--muted-2);
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -161,27 +163,62 @@ select {
   background: var(--surface-2);
   border: 1px solid var(--border);
   color: var(--muted);
+  animation: status-in 0.22s ease;
+}
+@keyframes status-in {
+  from {
+    transform: translateY(-2px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
 }
 .status-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--muted-2);
+  flex-shrink: 0;
+  background: var(--st);
 }
+/* per-state accent + matching text/border */
 .status-pill.recording {
-  color: var(--red);
-  border-color: color-mix(in srgb, var(--red) 40%, transparent);
-}
-.status-pill.recording .status-dot {
-  background: var(--red);
-  animation: pulse 1.1s ease-in-out infinite;
+  --st: #ff6470;
 }
 .status-pill.playing {
-  color: var(--green);
-  border-color: color-mix(in srgb, var(--green) 40%, transparent);
+  --st: #3ad07f;
 }
-.status-pill.playing .status-dot {
-  background: var(--green);
+.status-pill.error {
+  --st: #ff6470;
+  background: color-mix(in srgb, #ff6470 13%, var(--surface-2));
+}
+.status-pill.ok {
+  --st: #3ad07f;
+}
+.status-pill.update {
+  --st: #5aa9ff;
+}
+.status-pill.info {
+  --st: var(--muted);
+}
+.status-pill:not(.idle):not(.info) {
+  color: var(--st);
+  border-color: color-mix(in srgb, var(--st) 45%, transparent);
+}
+.status-pill.recording .status-dot {
+  animation: pulse-dot 1.1s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 color-mix(in srgb, #ff6470 60%, transparent);
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 0 5px transparent;
+  }
 }
 @keyframes pulse {
   0%,

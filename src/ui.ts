@@ -248,8 +248,16 @@ export function promptDialog(opts: {
   });
 }
 
+type ToastKind = "info" | "error" | "ok";
+let toastListener: ((message: string, kind: ToastKind) => void) | null = null;
+/** Lets the title-bar status indicator react to every toast. */
+export function setToastListener(fn: (message: string, kind: ToastKind) => void) {
+  toastListener = fn;
+}
+
 let toastHost: HTMLElement | null = null;
-export function toast(message: string, kind: "info" | "error" | "ok" = "info") {
+export function toast(message: string, kind: ToastKind = "info") {
+  toastListener?.(message, kind);
   if (!toastHost) toastHost = document.getElementById("toast-host");
   if (!toastHost) return;
   const t = h("div", { class: `toast ${kind}` }, message);

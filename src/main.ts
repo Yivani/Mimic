@@ -17,7 +17,7 @@ import type {
   PlaybackProgress,
   Settings,
 } from "./types";
-import { clear, h, toast } from "./ui";
+import { clear, h, setToastListener, toast } from "./ui";
 
 let settings: Settings;
 let mode: Mode = "idle";
@@ -171,6 +171,12 @@ async function init() {
   titlebarHost.append(tb.el);
   applyTheme(settings.theme);
 
+  // Surface errors/results in the status indicator, not just toasts.
+  setToastListener((_msg, kind) => {
+    if (kind === "error") tb.flash("error", "Error");
+    else if (kind === "ok") tb.flash("ok", "Done");
+  });
+
   try {
     mode = await api.getStatus();
   } catch {
@@ -192,7 +198,10 @@ async function init() {
 
   // Check for updates in the background; show a banner if one is available.
   void checkForUpdate().then((upd) => {
-    if (upd) showUpdateBanner(upd);
+    if (upd) {
+      tb.flash("update", "Update");
+      showUpdateBanner(upd);
+    }
   });
 }
 

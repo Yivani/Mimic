@@ -9,6 +9,7 @@ export function createTitlebar(opts: {
 }): {
   el: HTMLElement;
   setStatus(m: Mode): void;
+  flash(kind: "error" | "ok" | "info" | "update", label: string): void;
   setTheme(theme: string): void;
   setActiveView(name: string): void;
 } {
@@ -70,9 +71,40 @@ export function createTitlebar(opts: {
     h("div", { class: "tb-right" }, settingsBtn, themeBtn, pinBtn, minBtn, closeBtn),
   );
 
+  let baseMode: Mode = "idle";
+  let flashTimer: number | null = null;
+
+  const render = (state: string, label: string) => {
+    status.className = `status-pill ${state}`;
+    text.textContent = label;
+    // retrigger the entrance animation
+    status.style.animation = "none";
+    void status.offsetWidth;
+    status.style.animation = "";
+  };
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  function clearFlash() {
+    if (flashTimer != null) {
+      clearTimeout(flashTimer);
+      flashTimer = null;
+    }
+  }
+
   function setStatus(m: Mode) {
-    status.className = `status-pill ${m}`;
-    text.textContent = m.charAt(0).toUpperCase() + m.slice(1);
+    baseMode = m;
+    clearFlash();
+    render(m, cap(m));
+  }
+
+  // Briefly show a transient state (error, done, etc.), then revert to the mode.
+  function flash(kind: "error" | "ok" | "info" | "update", label: string) {
+    clearFlash();
+    render(kind, label);
+    flashTimer = window.setTimeout(() => {
+      flashTimer = null;
+      render(baseMode, cap(baseMode));
+    }, 2600);
   }
 
   function setTheme(theme: string) {
@@ -83,5 +115,5 @@ export function createTitlebar(opts: {
     settingsBtn.classList.toggle("active", name === "settings");
   }
 
-  return { el, setStatus, setTheme, setActiveView };
+  return { el, setStatus, flash, setTheme, setActiveView };
 }
