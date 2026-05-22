@@ -1,4 +1,5 @@
 import "./styles.css";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { api, on } from "./api";
 import { createTitlebar } from "./titlebar";
 import { icons } from "./icons";
@@ -124,6 +125,17 @@ function setMode(m: Mode) {
   mode = m;
   tb.setStatus(m);
   current?.onMode?.(m);
+  applyRecordingOverlay(m === "recording");
+}
+
+// While recording, dim the window and let clicks pass straight through to the
+// app being recorded, so Mimic never gets in the way. The live status (timer,
+// event count) stays visible. Stop with the global hotkey.
+function applyRecordingOverlay(recording: boolean) {
+  document.body.classList.toggle("recording-mode", recording);
+  getCurrentWindow()
+    .setIgnoreCursorEvents(recording)
+    .catch(() => {});
 }
 
 function registerEvents() {

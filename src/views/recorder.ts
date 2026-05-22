@@ -57,7 +57,7 @@ export function createRecorder(ctx: Ctx): ViewController {
       mode === "playing"
         ? "Playback in progress"
         : mode === "recording"
-          ? `Press ${hk(ctx.settings.hotkeys.record)} or click to stop`
+          ? `Window is click-through — press ${hk(ctx.settings.hotkeys.record)} to stop`
           : `Click or press ${hk(ctx.settings.hotkeys.record)}`;
   }
 

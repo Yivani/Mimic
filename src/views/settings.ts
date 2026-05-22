@@ -1,3 +1,4 @@
+import { getVersion } from "@tauri-apps/api/app";
 import { api } from "../api";
 import type { Ctx, ViewController } from "../store";
 import type { Hotkey, Settings } from "../types";
@@ -135,6 +136,11 @@ export function createSettings(ctx: Ctx): ViewController {
     settingRow("Start minimized", minimizedToggle),
   );
 
+  const versionLabel = h("span", { class: "version-label" }, "Mimic");
+  void getVersion()
+    .then((v) => (versionLabel.textContent = `Mimic v${v}`))
+    .catch(() => {});
+
   const root = h(
     "div",
     { class: "view settings-view" },
@@ -143,7 +149,12 @@ export function createSettings(ctx: Ctx): ViewController {
     displayCard,
     appearanceCard,
     systemCard,
-    h("div", { class: "settings-save" }, saveBtn),
+    h(
+      "div",
+      { class: "settings-footer" },
+      versionLabel,
+      h("div", { class: "settings-save" }, saveBtn),
+    ),
   );
 
   return { el: root };
