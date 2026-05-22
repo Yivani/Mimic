@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(rustc --version)",
+      "Bash(cargo --version)",
+      "Bash(cargo tauri *)",
+      "Bash(npm ls *)",
+      "Bash(npm view *)",
+      "Bash(curl -s https://crates.io/api/v1/crates/__TRACKED_VAR__)",
+      "Bash(curl -s \"https://crates.io/api/v1/crates/windows\")",
+      "Bash(python -c \"import PIL; print\\('PIL', PIL.__version__\\)\")",
+      "Read(//c/Program Files \\(x86\\)/Microsoft/EdgeWebView/Application/**)",
+      "Bash(./target/debug/hello_link.exe)",
+      "Bash(curl -s \"https://crates.io/api/v1/crates/rdev/0.5.3\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('features:', json.dumps\\(d['version']['features']\\)\\)\")",
+      "Bash(python -)",
+      "Bash(npm install *)",
+      "Bash(npx tauri *)",
+      "Bash(cargo check *)",
+      "Bash(npm run *)",
+      "Bash(cargo build *)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"TS-EXIT:$?\")",
+      "Bash(cargo clippy *)",
+      "PowerShell(ie4uinit.exe -show)",
+      "PowerShell(\"icon cache refresh requested\")",
+      "Bash(ls -la src-tauri/target/release/bundle/nsis/)",
+      "Bash(cat src-tauri/target/release/bundle/nsis/*.sig)",
+      "Bash(git init *)",
+      "Bash(git symbolic-ref *)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git -c user.email=\"domenicgrothe@gmail.com\" -c user.name=\"Yivani\" commit -q -m \"Mimic: macro recorder with auto-updater\")"
+    ]
+  }
+}
