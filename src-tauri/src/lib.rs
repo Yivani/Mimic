@@ -14,7 +14,7 @@ use playback::PlayParams;
 use state::{AppState, Mode};
 use std::sync::Arc;
 use tauri::{AppHandle, Manager, State};
-use tauri_plugin_global_shortcut::ShortcutState;
+use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 
 type Cmd<T> = Result<T, String>;
 
@@ -144,13 +144,20 @@ fn get_status(state: State<Arc<AppState>>) -> Mode {
     state.mode()
 }
 
-/// Temporarily ignore global hotkeys (used while capturing a new combo so the
-/// keypress doesn't trigger the existing binding).
+/// While capturing a new hotkey, fully unregister global shortcuts so the key
+/// (including function keys, which the OS otherwise swallows for registered
+/// shortcuts) reaches the capture field. Re-registers from settings when done.
 #[tauri::command]
-fn suspend_hotkeys(state: State<Arc<AppState>>, suspended: bool) {
+fn suspend_hotkeys(app: AppHandle, state: State<Arc<AppState>>, suspended: bool) {
     state
         .hotkeys_suspended
         .store(suspended, std::sync::atomic::Ordering::SeqCst);
+    if suspended {
+        let _ = app.global_shortcut().unregister_all();
+    } else {
+        let settings = state.settings.lock().map(|s| s.clone()).unwrap_or_default();
+        hotkeys::apply(&app, state.inner(), &settings);
+    }
 }
 
 #[tauri::command]

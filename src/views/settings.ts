@@ -177,7 +177,13 @@ export function createSettings(ctx: Ctx): ViewController {
     ),
   );
 
-  return { el: root };
+  return {
+    el: root,
+    // Make sure global hotkeys are re-registered if we leave mid-capture.
+    destroy() {
+      api.suspendHotkeys(false).catch(() => {});
+    },
+  };
 }
 
 function settingRow(label: string, control: HTMLElement): HTMLElement {
