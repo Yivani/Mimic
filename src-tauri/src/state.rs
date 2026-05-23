@@ -49,8 +49,6 @@ pub struct RecordingState {
     pub last_x: f64,
     pub last_y: f64,
     pub have_last: bool,
-    /// Keys currently held, to drop OS auto-repeat (a hold = one down + one up).
-    pub pressed_keys: Vec<Key>,
 }
 
 pub struct AppState {

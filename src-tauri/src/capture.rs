@@ -77,19 +77,14 @@ pub fn spawn_listener(state: Arc<AppState>, app: AppHandle) {
                         if state.is_filtered(&key) {
                             return;
                         }
-                        // Drop OS auto-repeat: only record the first press of a
-                        // held key. Hold duration is preserved by the release.
-                        if rec.pressed_keys.contains(&key) {
-                            return;
-                        }
-                        rec.pressed_keys.push(key);
+                        // Record every press, including OS auto-repeat, so a held
+                        // key replays as the exact same continuous down-stream.
                         Some(MacroEvent::KeyPress { t, key })
                     }
                     EventType::KeyRelease(key) => {
                         if state.is_filtered(&key) {
                             return;
                         }
-                        rec.pressed_keys.retain(|k| k != &key);
                         Some(MacroEvent::KeyRelease { t, key })
                     }
                     EventType::ButtonPress(button) => Some(MacroEvent::ButtonPress { t, button }),

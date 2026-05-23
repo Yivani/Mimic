@@ -33,7 +33,6 @@ pub fn start_recording(app: &AppHandle, state: &Arc<AppState>) -> Result<(), Str
         rec.last_move_t = 0;
         rec.last_x = 0.0;
         rec.last_y = 0.0;
-        rec.pressed_keys.clear();
     }
     let _ = app.emit("recording_started", ());
     emit_status(app, Mode::Recording);
