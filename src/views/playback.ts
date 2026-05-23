@@ -116,6 +116,11 @@ export function createPlayback(ctx: Ctx): ViewController {
     optsRow,
     h("div", { class: "play-actions" }, playBtn, stopBtn),
     h("div", { class: "progress-wrap" }, progressBar, progressText),
+    h(
+      "div",
+      { class: "play-hint" },
+      `Mimic hides while playing — press ${ctx.settings.hotkeys.stop.code} (emergency stop) to halt.`,
+    ),
   );
 
   const root = h("div", { class: "view" }, body);

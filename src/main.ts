@@ -134,15 +134,14 @@ function setMode(m: Mode) {
   mode = m;
   tb.setStatus(m);
   current?.onMode?.(m);
-  applyRecordingOverlay(m === "recording");
+  // Hide the window while recording OR playing, so Mimic is fully out of the
+  // way and the simulated input reaches the target app, not Mimic itself.
+  applyHiddenWindow(m === "recording" || m === "playing");
 }
 
-// While recording, hide the window entirely so Mimic is completely out of the
-// way (no clicks hit it, nothing covers the screen). It reappears on stop.
-// Capture is global, so recording continues while hidden; stop with the hotkey.
-function applyRecordingOverlay(recording: boolean) {
+function applyHiddenWindow(hidden: boolean) {
   const w = getCurrentWindow();
-  if (recording) {
+  if (hidden) {
     w.hide().catch(() => {});
   } else {
     w.show().catch(() => {});

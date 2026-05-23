@@ -745,6 +745,10 @@ select {
   color: var(--muted);
   font-family: var(--mono);
 }
+.play-hint {
+  font-size: 11.5px;
+  color: var(--muted-2);
+}
 
 /* ---------------- Library ---------------- */
 .library-toolbar {
