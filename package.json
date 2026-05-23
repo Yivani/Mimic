@@ -1,6 +1,6 @@
 {
   "name": "mimic",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Mimic — a polished cross-platform keyboard & mouse macro recorder/player",
   "type": "module",
   "scripts": {

@@ -137,14 +137,17 @@ function setMode(m: Mode) {
   applyRecordingOverlay(m === "recording");
 }
 
-// While recording, dim the window and let clicks pass straight through to the
-// app being recorded, so Mimic never gets in the way. The live status (timer,
-// event count) stays visible. Stop with the global hotkey.
+// While recording, hide the window entirely so Mimic is completely out of the
+// way (no clicks hit it, nothing covers the screen). It reappears on stop.
+// Capture is global, so recording continues while hidden; stop with the hotkey.
 function applyRecordingOverlay(recording: boolean) {
-  document.body.classList.toggle("recording-mode", recording);
-  getCurrentWindow()
-    .setIgnoreCursorEvents(recording)
-    .catch(() => {});
+  const w = getCurrentWindow();
+  if (recording) {
+    w.hide().catch(() => {});
+  } else {
+    w.show().catch(() => {});
+    w.setFocus().catch(() => {});
+  }
 }
 
 function registerEvents() {

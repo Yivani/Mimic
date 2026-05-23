@@ -144,6 +144,15 @@ fn get_status(state: State<Arc<AppState>>) -> Mode {
     state.mode()
 }
 
+/// Temporarily ignore global hotkeys (used while capturing a new combo so the
+/// keypress doesn't trigger the existing binding).
+#[tauri::command]
+fn suspend_hotkeys(state: State<Arc<AppState>>, suspended: bool) {
+    state
+        .hotkeys_suspended
+        .store(suspended, std::sync::atomic::Ordering::SeqCst);
+}
+
 #[tauri::command]
 fn get_mouse_position(state: State<Arc<AppState>>) -> [i32; 2] {
     [
@@ -239,6 +248,7 @@ pub fn run() {
             get_settings,
             set_settings,
             get_status,
+            suspend_hotkeys,
             get_mouse_position,
             set_selected_macro,
             get_screen_resolution,

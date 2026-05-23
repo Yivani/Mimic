@@ -59,6 +59,8 @@ pub struct AppState {
     /// Set true to ask the running playback loop to stop ASAP.
     pub stop_playback: AtomicBool,
     pub settings: Mutex<Settings>,
+    /// When true, global hotkeys are ignored (e.g. while capturing a new combo).
+    pub hotkeys_suspended: AtomicBool,
     /// Keys belonging to hotkeys, filtered out of recordings (small; linear ok).
     pub filter_keys: Mutex<Vec<Key>>,
     pub last_macro_id: Mutex<Option<String>>,
@@ -73,6 +75,7 @@ impl AppState {
             recording: Mutex::new(RecordingState::default()),
             stop_playback: AtomicBool::new(false),
             settings: Mutex::new(settings),
+            hotkeys_suspended: AtomicBool::new(false),
             filter_keys: Mutex::new(Vec::new()),
             last_macro_id: Mutex::new(None),
             cur_x: AtomicI32::new(0),

@@ -68,6 +68,12 @@ pub fn apply(app: &AppHandle, state: &Arc<AppState>, settings: &Settings) {
 /// Called from the plugin handler on a key press.
 pub fn handle(app: &AppHandle, shortcut: &Shortcut) {
     let state = app.state::<Arc<AppState>>().inner().clone();
+    if state
+        .hotkeys_suspended
+        .load(std::sync::atomic::Ordering::SeqCst)
+    {
+        return; // e.g. user is capturing a new hotkey in Settings
+    }
     let reg = app.state::<HotkeyRegistry>();
 
     let matches = |slot: &Mutex<Option<Shortcut>>| -> bool {

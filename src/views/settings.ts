@@ -233,6 +233,7 @@ function hotkeyCapture(
     capturing = false;
     btn.classList.remove("capturing");
     window.removeEventListener("keydown", onKey, true);
+    api.suspendHotkeys(false).catch(() => {});
   }
 
   function onKey(e: KeyboardEvent) {
@@ -262,6 +263,7 @@ function hotkeyCapture(
     capturing = true;
     btn.classList.add("capturing");
     btn.textContent = "Press keys…";
+    api.suspendHotkeys(true).catch(() => {});
     window.addEventListener("keydown", onKey, true);
   });
 

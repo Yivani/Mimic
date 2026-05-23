@@ -38,6 +38,8 @@ export const api = {
     invoke<void>("set_settings", { settings }),
 
   getStatus: () => invoke<Mode>("get_status"),
+  suspendHotkeys: (suspended: boolean) =>
+    invoke<void>("suspend_hotkeys", { suspended }),
   getMousePosition: () => invoke<[number, number]>("get_mouse_position"),
   getScreenResolution: () => invoke<[number, number]>("get_screen_resolution"),
   setSelectedMacro: (id: string | null) =>
