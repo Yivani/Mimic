@@ -561,6 +561,9 @@ select {
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
+.stat-row.four {
+  grid-template-columns: repeat(4, 1fr);
+}
 .stat {
   display: flex;
   align-items: center;
@@ -884,6 +887,13 @@ select {
 }
 .k-Wheel {
   border-left-color: var(--border-strong);
+}
+.k-GamepadButtonPress,
+.k-GamepadButtonRelease {
+  border-left-color: #5aa9ff;
+}
+.k-GamepadAxis {
+  border-left-color: #3ad07f;
 }
 .timeline-more {
   padding: 10px 14px;

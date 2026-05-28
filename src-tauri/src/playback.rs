@@ -7,6 +7,7 @@
 //! sub-millisecond for tight accuracy. Speed scaling simply divides each target
 //! offset by the multiplier, so 2x halves every gap and 0.5x doubles it.
 
+use crate::gamepad::VirtualGamepadContext;
 use crate::model::{Macro, MacroEvent};
 use crate::simulate;
 use crate::state::{AppState, Mode};
@@ -24,6 +25,7 @@ pub struct PlayParams {
     pub include_keyboard: bool,
     pub include_mouse: bool,
     pub include_mouse_move: bool,
+    pub include_gamepad: bool,
     pub infinite_cap: u32,
     /// Source resolution to scale mouse coordinates from (0 = live desktop).
     pub src_width: f64,
@@ -52,6 +54,8 @@ fn included(ev: &MacroEvent, p: &PlayParams) -> bool {
         p.include_mouse_move
     } else if ev.is_mouse_action() {
         p.include_mouse
+    } else if ev.is_gamepad() {
+        p.include_gamepad
     } else {
         true
     }
@@ -77,6 +81,9 @@ pub fn run(state: Arc<AppState>, app: AppHandle, m: Macro, p: PlayParams) {
     // is stopped mid-press — otherwise a modifier could get stuck down.
     let mut held_keys: Vec<Key> = Vec::new();
     let mut held_buttons: Vec<Button> = Vec::new();
+    let mut held_gp_buttons: Vec<crate::model::GamepadButton> = Vec::new();
+    let mut gp_ctx = VirtualGamepadContext::new();
+    gp_ctx.warn_if_unsupported();
 
     'outer: for loop_i in 0..iterations {
         let base = Instant::now();
@@ -96,7 +103,13 @@ pub fn run(state: Arc<AppState>, app: AppHandle, m: Macro, p: PlayParams) {
                 stopped = true;
                 break 'outer;
             }
-            simulate::dispatch(ev, p.src_width, p.src_height);
+
+            if ev.is_gamepad() {
+                crate::gamepad::dispatch(ev, &mut gp_ctx);
+            } else {
+                simulate::dispatch(ev, p.src_width, p.src_height);
+            }
+
             match ev {
                 MacroEvent::KeyPress { key, .. } => {
                     if !held_keys.contains(key) {
@@ -111,6 +124,14 @@ pub fn run(state: Arc<AppState>, app: AppHandle, m: Macro, p: PlayParams) {
                 }
                 MacroEvent::ButtonRelease { button, .. } => {
                     held_buttons.retain(|b| b != button)
+                }
+                MacroEvent::GamepadButtonPress { button, .. } => {
+                    if !held_gp_buttons.contains(button) {
+                        held_gp_buttons.push(button.clone());
+                    }
+                }
+                MacroEvent::GamepadButtonRelease { button, .. } => {
+                    held_gp_buttons.retain(|b| b != button)
                 }
                 _ => {}
             }
@@ -143,6 +164,12 @@ pub fn run(state: Arc<AppState>, app: AppHandle, m: Macro, p: PlayParams) {
     }
     for button in held_buttons {
         simulate::dispatch(&MacroEvent::ButtonRelease { t: 0, button }, 0.0, 0.0);
+    }
+    for button in held_gp_buttons {
+        crate::gamepad::dispatch(
+            &MacroEvent::GamepadButtonRelease { t: 0, button },
+            &mut gp_ctx,
+        );
     }
 
     state.set_mode(Mode::Idle);

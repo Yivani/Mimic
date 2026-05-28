@@ -4,9 +4,10 @@
 //! read it without taking a lock. Recording and playback can never overlap:
 //! every transition is gated on the current mode.
 
-use crate::model::{MacroEvent, Settings};
+use crate::model::{GamepadAxis, MacroEvent, Settings};
 use rdev::Key;
 use serde::Serialize;
+use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicI32, AtomicU8, Ordering};
 use std::sync::Mutex;
 use std::time::Instant;
@@ -49,6 +50,12 @@ pub struct RecordingState {
     pub last_x: f64,
     pub last_y: f64,
     pub have_last: bool,
+    /// Whether to include gamepad events in this recording.
+    pub capture_gamepad: bool,
+    /// Last recorded timestamp per axis (for throttling).
+    pub gp_axis_last_t: HashMap<GamepadAxis, u64>,
+    /// Last recorded value per axis (for throttling).
+    pub gp_axis_values: HashMap<GamepadAxis, f64>,
 }
 
 pub struct AppState {

@@ -53,6 +53,19 @@ export const icons = {
   clock: (s?: number) => make(["M12 21a9 9 0 100-18 9 9 0 000 18z", "M12 7v5l3 2"], { size: s }),
   activity: (s?: number) => make(["M22 12h-4l-3 9L9 3l-3 9H2"], { size: s }),
   cursor: (s?: number) => make(["M4 3l7.5 18 2.5-7.5L21.5 11z"], { size: s }),
+  gamepad: (s?: number) =>
+    make(
+      [
+        "M6 11h4",
+        "M8 9v4",
+        "M15 11h.01",
+        "M18 11h.01",
+        "M16 15h.01",
+        "M16 9h.01",
+        "M2 9a3 3 0 013-3h14a3 3 0 013 3v6a3 3 0 01-3 3H5a3 3 0 01-3-3V9z",
+      ],
+      { size: s },
+    ),
 
   edit: (s?: number) =>
     make(["M12 20h9", "M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"], { size: s }),

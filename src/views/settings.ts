@@ -16,6 +16,9 @@ export function createSettings(ctx: Ctx): ViewController {
   const distanceInput = numInput(draft.sample_distance_px, 0, 50, (v) => (draft.sample_distance_px = v));
   const speedInput = numInput(draft.default_speed, 0.25, 5, (v) => (draft.default_speed = v), 0.05);
   const capInput = numInput(draft.infinite_loop_cap, 1, 1000000, (v) => (draft.infinite_loop_cap = v));
+  const gpCaptureToggle = pillToggle(draft.capture_gamepad, (v) => (draft.capture_gamepad = v));
+  const gpAxisIntervalInput = numInput(draft.gamepad_axis_interval_ms, 1, 100, (v) => (draft.gamepad_axis_interval_ms = v));
+  const gpAxisDeadzoneInput = numInput(draft.gamepad_axis_deadzone, 0, 1, (v) => (draft.gamepad_axis_deadzone = v), 0.01);
 
   const themeSeg = segmented(
     [
@@ -111,6 +114,13 @@ export function createSettings(ctx: Ctx): ViewController {
     settingRow("Min sample distance (px)", distanceInput),
   );
 
+  const gamepadCard = card(
+    { title: "Gamepad", subtitle: "Xbox / controller capture options" },
+    settingRow("Capture gamepad", gpCaptureToggle),
+    settingRow("Axis sample interval (ms)", gpAxisIntervalInput),
+    settingRow("Axis deadzone", gpAxisDeadzoneInput),
+  );
+
   const playbackCard = card(
     { title: "Playback", subtitle: "Defaults & safety" },
     settingRow("Default speed (x)", speedInput),
@@ -166,6 +176,7 @@ export function createSettings(ctx: Ctx): ViewController {
     { class: "view settings-view" },
     hotkeysCard,
     h("div", { class: "settings-grid" }, captureCard, playbackCard),
+    gamepadCard,
     displayCard,
     appearanceCard,
     systemCard,

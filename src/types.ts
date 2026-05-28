@@ -7,7 +7,10 @@ export interface MacroEvent {
     | "ButtonPress"
     | "ButtonRelease"
     | "MouseMove"
-    | "Wheel";
+    | "Wheel"
+    | "GamepadButtonPress"
+    | "GamepadButtonRelease"
+    | "GamepadAxis";
   t: number;
   key?: string;
   button?: string;
@@ -15,6 +18,8 @@ export interface MacroEvent {
   y?: number;
   dx?: number;
   dy?: number;
+  axis?: string;
+  value?: number;
 }
 
 export interface Macro {
@@ -62,6 +67,9 @@ export interface Settings {
   infinite_loop_cap: number;
   screen_width: number;
   screen_height: number;
+  capture_gamepad: boolean;
+  gamepad_axis_interval_ms: number;
+  gamepad_axis_deadzone: number;
 }
 
 export interface PlaybackProgress {

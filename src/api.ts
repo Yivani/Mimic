@@ -10,6 +10,7 @@ export interface PlaybackArgs {
   includeKeyboard: boolean;
   includeMouse: boolean;
   includeMouseMove: boolean;
+  includeGamepad: boolean;
 }
 
 export const api = {

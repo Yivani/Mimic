@@ -8,7 +8,7 @@ import { createPlayback } from "./views/playback";
 import { createRecorder } from "./views/recorder";
 import { createSettings } from "./views/settings";
 import { checkForUpdate, type AvailableUpdate } from "./updater";
-import type { Ctx, ViewController, ViewName } from "./store";
+import type { Ctx, GamepadStatus, ViewController, ViewName } from "./store";
 import type {
   EventCaptured,
   Macro,
@@ -168,6 +168,9 @@ function registerEvents() {
     ctx.pendingRecording = m.events.length > 0 ? m : null;
     if (currentName !== "recorder") switchView("recorder");
     current?.onRecordingStopped?.(m);
+  });
+  on<GamepadStatus>("gamepad_status", (s) => {
+    current?.onGamepadStatus?.(s);
   });
 }
 

@@ -19,9 +19,15 @@ pub fn start_recording(app: &AppHandle, state: &Arc<AppState>) -> Result<(), Str
     if !state.try_transition(Mode::Idle, Mode::Recording) {
         return Err("Mimic is busy (already recording or playing).".into());
     }
-    let (interval, distance) = {
+    let (interval, distance, capture_gp, _gp_axis_interval, _gp_deadzone) = {
         let s = state.settings.lock().map_err(|_| "settings lock")?;
-        (s.sample_interval_ms, s.sample_distance_px)
+        (
+            s.sample_interval_ms,
+            s.sample_distance_px,
+            s.capture_gamepad,
+            s.gamepad_axis_interval_ms,
+            s.gamepad_axis_deadzone,
+        )
     };
     {
         let mut rec = state.recording.lock().map_err(|_| "recording lock")?;
@@ -33,6 +39,9 @@ pub fn start_recording(app: &AppHandle, state: &Arc<AppState>) -> Result<(), Str
         rec.last_move_t = 0;
         rec.last_x = 0.0;
         rec.last_y = 0.0;
+        rec.capture_gamepad = capture_gp;
+        rec.gp_axis_last_t.clear();
+        rec.gp_axis_values.clear();
     }
     let _ = app.emit("recording_started", ());
     emit_status(app, Mode::Recording);

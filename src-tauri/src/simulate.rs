@@ -30,6 +30,8 @@ pub fn dispatch(ev: &MacroEvent, src_w: f64, src_h: f64) {
             });
         }
         MacroEvent::MouseMove { x, y, .. } => move_mouse(*x, *y, src_w, src_h),
+        // Gamepad events are handled by gamepad::dispatch, not here.
+        _ => {}
     }
 }
 

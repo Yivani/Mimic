@@ -8,6 +8,41 @@
 use rdev::{Button, Key};
 use serde::{Deserialize, Serialize};
 
+/// Normalised gamepad button names (Xbox layout).
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+#[serde(rename_all = "PascalCase")]
+pub enum GamepadButton {
+    A,
+    B,
+    X,
+    Y,
+    LeftShoulder,
+    RightShoulder,
+    LeftTrigger,
+    RightTrigger,
+    LeftStick,
+    RightStick,
+    DPadUp,
+    DPadDown,
+    DPadLeft,
+    DPadRight,
+    Start,
+    Back,
+    Guide,
+}
+
+/// Normalised gamepad axis names.
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[serde(rename_all = "PascalCase")]
+pub enum GamepadAxis {
+    LeftStickX,
+    LeftStickY,
+    RightStickX,
+    RightStickY,
+    LeftTrigger,
+    RightTrigger,
+}
+
 /// A single recorded input event. `t` is milliseconds since recording start.
 ///
 /// Internally tagged on `kind` so JSON looks like:
@@ -21,6 +56,9 @@ pub enum MacroEvent {
     ButtonRelease { t: u64, button: Button },
     MouseMove { t: u64, x: f64, y: f64 },
     Wheel { t: u64, dx: i64, dy: i64 },
+    GamepadButtonPress { t: u64, button: GamepadButton },
+    GamepadButtonRelease { t: u64, button: GamepadButton },
+    GamepadAxis { t: u64, axis: GamepadAxis, value: f64 },
 }
 
 impl MacroEvent {
@@ -31,7 +69,10 @@ impl MacroEvent {
             | MacroEvent::ButtonPress { t, .. }
             | MacroEvent::ButtonRelease { t, .. }
             | MacroEvent::MouseMove { t, .. }
-            | MacroEvent::Wheel { t, .. } => *t,
+            | MacroEvent::Wheel { t, .. }
+            | MacroEvent::GamepadButtonPress { t, .. }
+            | MacroEvent::GamepadButtonRelease { t, .. }
+            | MacroEvent::GamepadAxis { t, .. } => *t,
         }
     }
 
@@ -51,6 +92,15 @@ impl MacroEvent {
         )
     }
 
+    pub fn is_gamepad(&self) -> bool {
+        matches!(
+            self,
+            MacroEvent::GamepadButtonPress { .. }
+                | MacroEvent::GamepadButtonRelease { .. }
+                | MacroEvent::GamepadAxis { .. }
+        )
+    }
+
     /// Short human label for the timeline preview, e.g. "KeyPress A".
     pub fn label(&self) -> String {
         match self {
@@ -60,6 +110,15 @@ impl MacroEvent {
             MacroEvent::ButtonRelease { button, .. } => format!("ButtonRelease {:?}", button),
             MacroEvent::MouseMove { x, y, .. } => format!("MouseMove ({:.0},{:.0})", x, y),
             MacroEvent::Wheel { dx, dy, .. } => format!("Wheel ({},{})", dx, dy),
+            MacroEvent::GamepadButtonPress { button, .. } => {
+                format!("GP BtnPress {:?}", button)
+            }
+            MacroEvent::GamepadButtonRelease { button, .. } => {
+                format!("GP BtnRelease {:?}", button)
+            }
+            MacroEvent::GamepadAxis { axis, value, .. } => {
+                format!("GP Axis {:?} {:.3}", axis, value)
+            }
         }
     }
 }
@@ -175,6 +234,12 @@ pub struct Settings {
     /// 0 = auto-detect at runtime.
     pub screen_width: u32,
     pub screen_height: u32,
+    /// Include Xbox / gamepad input while recording.
+    pub capture_gamepad: bool,
+    /// Minimum ms between recorded gamepad-axis samples.
+    pub gamepad_axis_interval_ms: u64,
+    /// Minimum axis delta before a new gamepad-axis sample is kept.
+    pub gamepad_axis_deadzone: f64,
 }
 
 impl Default for Settings {
@@ -191,6 +256,9 @@ impl Default for Settings {
             infinite_loop_cap: 1000,
             screen_width: 0,
             screen_height: 0,
+            capture_gamepad: true,
+            gamepad_axis_interval_ms: 16,
+            gamepad_axis_deadzone: 0.05,
         }
     }
 }

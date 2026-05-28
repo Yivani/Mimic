@@ -1,6 +1,6 @@
 import { api } from "../api";
 import { icons } from "../icons";
-import type { Ctx, ViewController } from "../store";
+import type { Ctx, GamepadStatus, ViewController } from "../store";
 import type { EventCaptured, Macro, Mode } from "../types";
 import { card, chip, clear, fmtClock, fmtDuration, h, toast } from "../ui";
 
@@ -12,6 +12,7 @@ export function createRecorder(ctx: Ctx): ViewController {
   const elapsedVal = h("span", { class: "stat-val mono" }, "00:00.00");
   const eventsVal = h("span", { class: "stat-val mono" }, "0");
   const cursorVal = h("span", { class: "stat-val mono" }, "—");
+  const gamepadVal = h("span", { class: "stat-val mono" }, "—");
 
   const bigBtn = h("button", { class: "record-btn", type: "button" });
   bigBtn.append(
@@ -33,14 +34,15 @@ export function createRecorder(ctx: Ctx): ViewController {
 
   const stats = h(
     "div",
-    { class: "stat-row" },
+    { class: "stat-row four" },
     statChip("Elapsed", icons.clock(16), "elapsed", elapsedVal),
     statChip("Events", icons.activity(16), "events", eventsVal),
     statChip("Cursor", icons.cursor(16), "cursor", cursorVal),
+    statChip("Gamepad", icons.gamepad(16), "gamepad", gamepadVal),
   );
 
   const recorderCard = card(
-    { title: "Recorder", subtitle: "Capture keyboard, mouse & scroll globally" },
+    { title: "Recorder", subtitle: "Capture keyboard, mouse, scroll & gamepad globally" },
     stage,
     stats,
     savePanel,
@@ -176,6 +178,9 @@ export function createRecorder(ctx: Ctx): ViewController {
     },
     onMousePos(x, y) {
       cursorVal.textContent = `${x}, ${y}`;
+    },
+    onGamepadStatus(s: GamepadStatus) {
+      gamepadVal.textContent = s.connected ? (s.name || "Connected") : "—";
     },
     onRecordingStopped(m) {
       stopTimer();

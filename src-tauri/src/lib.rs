@@ -1,5 +1,6 @@
 mod capture;
 mod controller;
+mod gamepad;
 mod hotkeys;
 mod mapping;
 mod model;
@@ -44,6 +45,7 @@ fn start_playback(
     include_keyboard: bool,
     include_mouse: bool,
     include_mouse_move: bool,
+    include_gamepad: bool,
 ) -> Cmd<()> {
     let m = storage::load_macro(&app, &macro_id)?;
     let cap = state
@@ -63,6 +65,7 @@ fn start_playback(
             include_keyboard,
             include_mouse,
             include_mouse_move,
+            include_gamepad,
             infinite_cap: cap,
             src_width,
             src_height,
@@ -236,6 +239,7 @@ pub fn run() {
             app.manage(state.clone());
 
             capture::spawn_listener(state.clone(), handle.clone());
+            gamepad::spawn_listener(state.clone(), handle.clone());
             hotkeys::apply(&handle, &state, &settings);
             Ok(())
         })

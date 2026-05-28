@@ -95,6 +95,7 @@ export function createLibrary(ctx: Ctx, openId?: string): ViewController {
             includeKeyboard: true,
             includeMouse: true,
             includeMouseMove: true,
+            includeGamepad: true,
           });
         } catch (e) {
           toast(String(e), "error");
@@ -258,6 +259,11 @@ function eventDetail(ev: MacroEvent): string {
       return `(${Math.round(ev.x ?? 0)}, ${Math.round(ev.y ?? 0)})`;
     case "Wheel":
       return `Δ(${ev.dx ?? 0}, ${ev.dy ?? 0})`;
+    case "GamepadButtonPress":
+    case "GamepadButtonRelease":
+      return ev.button ?? "";
+    case "GamepadAxis":
+      return `${ev.axis ?? ""} ${(ev.value ?? 0).toFixed(3)}`;
     default:
       return "";
   }

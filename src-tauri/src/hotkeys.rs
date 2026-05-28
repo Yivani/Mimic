@@ -136,6 +136,7 @@ fn play_selected(app: &AppHandle, state: &Arc<AppState>) -> Result<(), String> {
             include_keyboard: true,
             include_mouse: true,
             include_mouse_move: true,
+            include_gamepad: true,
             infinite_cap: cap,
             src_width,
             src_height,

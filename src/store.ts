@@ -9,6 +9,11 @@ import type {
 
 export type ViewName = "recorder" | "playback" | "library" | "settings";
 
+export interface GamepadStatus {
+  connected: boolean;
+  name: string;
+}
+
 /** A mounted view. High-frequency backend events are forwarded to the optional
  * hooks so views can update specific DOM nodes without a full re-render. */
 export interface ViewController {
@@ -19,6 +24,7 @@ export interface ViewController {
   onProgress?(p: PlaybackProgress): void;
   onRecordingStopped?(m: Macro): void;
   onPlaybackFinished?(stopped: boolean): void;
+  onGamepadStatus?(s: GamepadStatus): void;
   destroy?(): void;
 }
 

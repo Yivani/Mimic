@@ -11,6 +11,7 @@ export function createPlayback(ctx: Ctx): ViewController {
   let includeKeyboard = true;
   let includeMouse = true;
   let includeMouseMove = true;
+  let includeGamepad = true;
 
   const selector = h("select", { class: "select" }) as HTMLSelectElement;
   selector.addEventListener("change", () => {
@@ -82,6 +83,7 @@ export function createPlayback(ctx: Ctx): ViewController {
         includeKeyboard,
         includeMouse,
         includeMouseMove,
+        includeGamepad,
       });
     } catch (e) {
       toast(String(e), "error");
@@ -95,6 +97,7 @@ export function createPlayback(ctx: Ctx): ViewController {
     optRow("Include keyboard", pillToggle(includeKeyboard, (v) => (includeKeyboard = v))),
     optRow("Include mouse clicks & scroll", pillToggle(includeMouse, (v) => (includeMouse = v))),
     optRow("Include mouse movement", pillToggle(includeMouseMove, (v) => (includeMouseMove = v))),
+    optRow("Include gamepad", pillToggle(includeGamepad, (v) => (includeGamepad = v))),
   );
 
   const body = card(
